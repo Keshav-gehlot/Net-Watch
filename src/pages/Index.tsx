@@ -6,18 +6,40 @@ import TrafficChart from "@/components/dashboard/TrafficChart";
 import PacketTable from "@/components/packets/PacketTable";
 import AlertsList from "@/components/alerts/AlertsList";
 import { usePacketStream } from "@/hooks/usePacketStream";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 const Index = () => {
   const { packets, alerts, pps, stats, connected } = usePacketStream({ simulate: true });
+  const [ppsHistory, setPpsHistory] = useState<number[]>(() => Array(30).fill(0));
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize history with first PPS value when available
+  useEffect(() => {
+    if (pps > 0 && !isInitialized) {
+      setPpsHistory(Array(30).fill(pps));
+      setIsInitialized(true);
+    }
+  }, [pps, isInitialized]);
+
+  // Update PPS history every 2 seconds for faster response
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    const interval = setInterval(() => {
+      setPpsHistory(prev => [...prev.slice(1), pps]);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [pps, isInitialized]);
 
   const ppsSeries = useMemo(() => {
     const now = Date.now();
-    return Array.from({ length: 30 }).map((_, i) => ({
-      time: new Date(now - (30 - i) * 1000).toLocaleTimeString(),
-      pps: i === 29 ? pps : Math.max(0, Math.round(pps * (0.7 + Math.random() * 0.6))),
+    const series = ppsHistory.map((value, i) => ({
+      time: new Date(now - (29 - i) * 2000).toLocaleTimeString(),
+      pps: value,
     }));
-  }, [pps]);
+    return series;
+  }, [ppsHistory]);
 
   return (
     <HelmetProvider>
@@ -30,40 +52,45 @@ const Index = () => {
         <Navbar />
         <main className="container mx-auto flex-1 py-8 space-y-8">
           <h1 className="sr-only">NetWatch Network Packet Sniffer & Analyzer Dashboard</h1>
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             <StatCard title="Connection" value={connected ? "Live" : "Offline"} kpi={connected ? "Receiving stream" : "Using simulator"} />
             <StatCard title="Packets / sec" value={`${pps}`} />
             <StatCard title="Top Protocol" value={stats.topProtocols[0]?.name ?? "-"} kpi={`${stats.topProtocols[0]?.value ?? 0} packets`} />
           </section>
 
-          <section className="grid gap-6 md:grid-cols-5">
-            <div className="md:col-span-3">
+          {/* Debug info - temporary */}
+          <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
+            Debug: Total Packets: {packets.length} | PPS: {pps} | History: [{ppsHistory.slice(-5).join(', ')}] | Initialized: {isInitialized ? 'Yes' : 'No'}
+          </div>
+
+          <section className="grid gap-6 grid-cols-1 lg:grid-cols-5">
+            <div className="lg:col-span-3">
               <h2 className="sr-only">Traffic</h2>
               <TrafficChart data={ppsSeries} />
             </div>
-            <div className="md:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-4">
               <h2 className="text-lg font-semibold">Top Talkers</h2>
               <ul className="space-y-2">
                 {stats.topTalkers.map((t) => (
                   <li key={t.ip} className="flex items-center justify-between border rounded-md p-3">
-                    <span className="text-sm">{t.ip}</span>
+                    <span className="text-sm font-mono">{t.ip}</span>
                     <span className="text-xs text-muted-foreground">{t.count} pkts</span>
                   </li>
                 ))}
               </ul>
               <div className="pt-2">
-                <Button variant="hero" asChild>
+                <Button variant="hero" asChild className="w-full sm:w-auto">
                   <a href="#agent" aria-label="Download Python agent">Download Python Agent</a>
                 </Button>
               </div>
             </div>
           </section>
 
-          <section className="grid gap-6 md:grid-cols-5">
-            <div className="md:col-span-3">
+          <section className="grid gap-6 grid-cols-1 lg:grid-cols-5">
+            <div className="lg:col-span-3">
               <PacketTable packets={packets} />
             </div>
-            <div className="md:col-span-2">
+            <div className="lg:col-span-2">
               <AlertsList alerts={alerts} />
             </div>
           </section>

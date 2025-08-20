@@ -9,6 +9,7 @@ import PacketsPage from "./pages/Packets";
 import AlertsPage from "./pages/Alerts";
 import UploadPage from "./pages/Upload";
 import UrlCheckPage from "./pages/UrlCheck";
+import FeaturesPage from "./pages/Features";
 import { HelmetProvider } from "react-helmet-async";
 import Spotlight from "@/components/visuals/Spotlight";
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/alerts" element={<AlertsPage />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/url-check" element={<UrlCheckPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Packet, AlertItem } from "@/types/network";
+import { useWebSocket } from "./useWebSocket";
 
 interface Options {
   simulate?: boolean;
@@ -32,29 +33,66 @@ function genPacket(): Packet {
 export function usePacketStream({ simulate = true, websocketUrl }: Options) {
   const [packets, setPackets] = useState<Packet[]>([]);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
-  const [connected, setConnected] = useState<boolean>(false);
   const [pps, setPps] = useState<number>(0);
-  const wsRef = useRef<WebSocket | null>(null);
+
+  // Enhanced WebSocket connection
+  const { 
+    isConnected, 
+    isConnecting, 
+    reconnectCount, 
+    error: wsError 
+  } = useWebSocket({
+    url: websocketUrl || "",
+    onMessage: (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        const pkt: Packet = data;
+        handleIncoming([pkt]);
+      } catch (err) {
+        console.warn("Failed to parse WebSocket message:", err);
+      }
+    },
+    onError: (error) => {
+      console.error("WebSocket error:", error);
+    },
+    onReconnectAttempt: (attempt) => {
+      console.log(`WebSocket reconnection attempt ${attempt}`);
+    }
+  });
+
+  // Connection status - prioritize WebSocket if URL provided
+  const connected = websocketUrl ? isConnected : simulate;
 
   // Intrusion rules state
   const portHitsRef = useRef<Map<string, Set<number>>>(new Map());
   const recentCountsRef = useRef<Map<string, number>>(new Map());
 
-  // Stats updater for PPS
+  // Improved PPS calculation with proper timing
+  const packetCountRef = useRef<number>(0);
+  const lastUpdateRef = useRef<number>(Date.now());
+
   useEffect(() => {
-    let lastCount = 0;
     const interval = setInterval(() => {
-      const nowCount = packets.length;
-      setPps(Math.max(0, nowCount - lastCount));
-      lastCount = nowCount;
+      const currentTime = Date.now();
+      const currentCount = packets.length;
+      const timeDiff = currentTime - lastUpdateRef.current;
+      
+      // Calculate PPS based on actual time difference
+      const newPackets = currentCount - packetCountRef.current;
+      const actualPps = timeDiff > 0 ? Math.round((newPackets * 1000) / timeDiff) : 0;
+      
+      setPps(Math.max(0, actualPps));
+      packetCountRef.current = currentCount;
+      lastUpdateRef.current = currentTime;
     }, 1000);
+    
     return () => clearInterval(interval);
-  }, [packets.length]);
+  }, [packets]);
 
   // Simulated generator
   useEffect(() => {
-    if (!simulate) return;
-    setConnected(true);
+    if (!simulate || websocketUrl) return;
+    
     const id = setInterval(() => {
       const burst = Math.random() < 0.1 ? 50 : Math.floor(Math.random() * 5) + 1; // occasional bursts
       const newPackets: Packet[] = Array.from({ length: burst }, () => genPacket());
@@ -62,26 +100,9 @@ export function usePacketStream({ simulate = true, websocketUrl }: Options) {
     }, 500);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [simulate]);
+  }, [simulate, websocketUrl]);
 
-  // WebSocket connection
-  useEffect(() => {
-    if (!websocketUrl) return;
-    const ws = new WebSocket(websocketUrl);
-    wsRef.current = ws;
-    ws.onopen = () => setConnected(true);
-    ws.onclose = () => setConnected(false);
-    ws.onerror = () => setConnected(false);
-    ws.onmessage = (ev) => {
-      try {
-        const data = JSON.parse(ev.data);
-        const pkt: Packet = data;
-        handleIncoming([pkt]);
-      } catch (_) {}
-    };
-    return () => ws.close();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [websocketUrl]);
+  // Remove old WebSocket connection code since it's handled by useWebSocket hook
 
   function handleIncoming(newPackets: Packet[]) {
     setPackets((prev) => {
@@ -183,5 +204,11 @@ export function usePacketStream({ simulate = true, websocketUrl }: Options) {
     stats,
     setPackets,
     setAlerts,
+    // WebSocket status for debugging/monitoring
+    wsStatus: {
+      isConnecting,
+      reconnectCount,
+      error: wsError
+    }
   } as const;
 }
