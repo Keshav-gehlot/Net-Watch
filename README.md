@@ -1,73 +1,112 @@
-# Welcome to your Lovable project
+🌐 Net-Watch
 
-## Project info
 
-**URL**: https://lovable.dev/projects/b46ada52-6463-47d0-8300-1759f962a747
 
-## How can I edit this code?
 
-There are several ways of editing your application.
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b46ada52-6463-47d0-8300-1759f962a747) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Net-Watch is a modern, responsive web application template designed for building monitoring dashboards and data visualization tools.
+Powered by React, Vite, and Tailwind, it provides a scalable foundation for real-time analytics projects.
 
-Follow these steps:
+✨ Features
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+⚡ Fast Development with Vite
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+⚛️ Component-Based UI using React + TypeScript
 
-# Step 3: Install the necessary dependencies.
-npm i
+🎨 Beautiful Styling powered by Tailwind CSS
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+🧩 Polished Components via shadcn-ui
+
+🔍 Linting & Formatting with ESLint + Prettier
+
+📊 Dashboard-Ready foundation for monitoring systems
+
+📸 Preview (Coming Soon)
+
+Add screenshots or GIFs of your dashboard UI once you build it.
+
+📂 Project Structure
+Net-Watch/
+├── public/               # Static assets
+├── src/                  
+│   ├── main.tsx          # Entry point
+│   ├── App.tsx           # Root component
+│   ├── components/       # Reusable UI
+│   ├── pages/            # Page-level components
+│   ├── lib/              # Helpers & utilities
+│   └── index.css         # Tailwind global styles
+├── components.json       # shadcn-ui config
+├── tailwind.config.ts    # Tailwind setup
+├── vite.config.ts        # Vite configuration
+├── tsconfig.json         # TypeScript config
+├── package.json          # Dependencies & scripts
+└── README.md             # Project docs
+
+🚀 Getting Started
+1️⃣ Clone the Repository
+git clone https://github.com/Keshav-gehlot/Net-Watch.git
+cd Net-Watch
+
+2️⃣ Install Dependencies
+npm install      # or bun install
+
+3️⃣ Run Development Server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+👉 App runs at http://localhost:5173
 
-**Use GitHub Codespaces**
+4️⃣ Build for Production
+npm run build
+npm run preview
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+📦 Scripts
 
-## What technologies are used for this project?
+npm run dev → Start dev server
 
-This project is built with:
+npm run build → Build for production
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+npm run preview → Preview production build
 
-## How can I deploy this project?
+npm run lint → Run ESLint checks
 
-Simply open [Lovable](https://lovable.dev/projects/b46ada52-6463-47d0-8300-1759f962a747) and click on Share -> Publish.
+🌟 Vision for Net-Watch
 
-## Can I connect a custom domain to my Lovable project?
+Net-Watch aims to be a modular network monitoring dashboard.
+Future features may include:
 
-Yes, you can!
+✅ Real-time metrics (latency, bandwidth, uptime)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+📊 Interactive charts (Recharts/Chart.js)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+🔔 Threshold-based alerts
+
+🔐 Authentication & role-based access
+
+🕒 Historical data storage & trends
+
+🤝 Contributing
+
+Contributions are welcome! 🚀
+
+Fork the repo
+
+Create a feature branch (git checkout -b feature/awesome)
+
+Commit changes (git commit -m 'Added something cool')
+
+Push (git push origin feature/awesome)
+
+Open a Pull Request
+
+📄 License
+
+This project is licensed under the MIT License.
+Feel free to use it in your own projects.
+
+✨ Made with passion by Keshav Gehlot
