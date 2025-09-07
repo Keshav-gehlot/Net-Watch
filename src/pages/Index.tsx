@@ -5,15 +5,11 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import TrafficChart from "@/components/dashboard/TrafficChart";
 import PacketTable from "@/components/packets/PacketTable";
 import AlertsList from "@/components/alerts/AlertsList";
-import { AgentSetup } from "@/components/setup/AgentSetup";
 import { usePacketStream } from "@/hooks/usePacketStream";
 import { useMemo, useState, useEffect } from "react";
 
 const Index = () => {
-  const { packets, alerts, pps, stats, connected, wsStatus } = usePacketStream({ 
-    simulate: false, 
-    websocketUrl: "ws://localhost:8765" 
-  });
+  const { packets, alerts, pps, stats, connected } = usePacketStream({ simulate: true });
   const [ppsHistory, setPpsHistory] = useState<number[]>(() => Array(30).fill(0));
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -56,15 +52,8 @@ const Index = () => {
         <Navbar />
         <main className="container mx-auto flex-1 py-8 space-y-8">
           <h1 className="sr-only">NetWatch Network Packet Sniffer & Analyzer Dashboard</h1>
-          
-          {!connected && (
-            <section>
-              <AgentSetup wsStatus={wsStatus} connected={connected} />
-            </section>
-          )}
-          
           <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard title="Connection" value={connected ? "Live" : "Offline"} kpi={connected ? "Receiving packets" : "Agent disconnected"} />
+            <StatCard title="Connection" value={connected ? "Live" : "Offline"} kpi={connected ? "Receiving stream" : "Using simulator"} />
             <StatCard title="Packets / sec" value={`${pps}`} />
             <StatCard title="Top Protocol" value={stats.topProtocols[0]?.name ?? "-"} kpi={`${stats.topProtocols[0]?.value ?? 0} packets`} />
           </section>
@@ -99,7 +88,7 @@ const Index = () => {
 
           <section className="grid gap-6 grid-cols-1 lg:grid-cols-5">
             <div className="lg:col-span-3">
-              <PacketTable packets={packets} connected={connected} wsStatus={wsStatus} />
+              <PacketTable packets={packets} />
             </div>
             <div className="lg:col-span-2">
               <AlertsList alerts={alerts} />

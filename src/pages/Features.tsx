@@ -12,10 +12,7 @@ import { useState, useEffect } from "react";
 import { Activity, Cpu, Zap, Shield, Smartphone } from "lucide-react";
 
 const FeaturesPage = () => {
-  const { packets, alerts, connected, pps, wsStatus } = usePacketStream({ 
-    simulate: false, 
-    websocketUrl: "ws://localhost:8765" 
-  });
+  const { packets, alerts, connected, pps, wsStatus } = usePacketStream({ simulate: true });
   const { isWorkerReady, analyzeThreat, calculateStatistics } = usePacketAnalysisWorker();
   const [rules, setRules] = useState<DetectionRule[]>([]);
   const [workerStats, setWorkerStats] = useState<any>(null);

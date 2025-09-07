@@ -5,10 +5,7 @@ import { AgentSetup } from "@/components/setup/AgentSetup";
 import { usePacketStream } from "@/hooks/usePacketStream";
 
 const PacketsPage = () => {
-  const { packets, connected, wsStatus } = usePacketStream({ 
-    simulate: false, 
-    websocketUrl: "ws://localhost:8765" 
-  });
+  const { packets, connected, wsStatus } = usePacketStream({});
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -23,7 +20,7 @@ const PacketsPage = () => {
         
         <AgentSetup wsStatus={wsStatus} connected={connected} />
         
-        <PacketTable packets={packets} connected={connected} wsStatus={wsStatus} />
+        <PacketTable packets={packets} />
       </main>
     </div>
   );

@@ -4,10 +4,7 @@ import AlertsList from "@/components/alerts/AlertsList";
 import { usePacketStream } from "@/hooks/usePacketStream";
 
 const AlertsPage = () => {
-  const { alerts, connected, wsStatus } = usePacketStream({ 
-    simulate: false, 
-    websocketUrl: "ws://localhost:8765" 
-  });
+  const { alerts } = usePacketStream({ simulate: true });
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
