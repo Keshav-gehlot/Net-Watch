@@ -8,7 +8,7 @@ import { Copy, Download, Terminal, Wifi, AlertCircle, CheckCircle } from "lucide
 import { toast } from "sonner";
 
 interface AgentSetupProps {
-  wsStatus: {
+  wsStatus?: {
     isConnecting: boolean;
     reconnectCount: number;
     error: any;
@@ -16,7 +16,7 @@ interface AgentSetupProps {
   connected: boolean;
 }
 
-export function AgentSetup({ wsStatus, connected }: AgentSetupProps) {
+export function AgentSetup({ wsStatus = { isConnecting: false, reconnectCount: 0, error: null }, connected }: AgentSetupProps) {
   const [wsUrl, setWsUrl] = useState("ws://localhost:8765");
 
   const copyToClipboard = (text: string) => {

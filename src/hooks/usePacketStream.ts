@@ -211,11 +211,11 @@ export function usePacketStream({ simulate = false, websocketUrl = "ws://localho
     stats,
     setPackets,
     setAlerts,
-    // WebSocket status for debugging/monitoring
+    // WebSocket status for debugging/monitoring - always provide defaults
     wsStatus: {
-      isConnecting,
-      reconnectCount,
-      error: wsError
+      isConnecting: websocketUrl ? isConnecting : false,
+      reconnectCount: websocketUrl ? reconnectCount : 0,
+      error: websocketUrl ? wsError : null
     }
   } as const;
 }
