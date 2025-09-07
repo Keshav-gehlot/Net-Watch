@@ -60,8 +60,15 @@ export function usePacketStream({ simulate = false, websocketUrl = "ws://localho
     }
   });
 
-  // Connection status - prioritize WebSocket if URL provided
+  // Connection status - when using WebSocket, only show connected if actually connected
   const connected = websocketUrl ? isConnected : simulate;
+
+  // Clear packets when WebSocket connection fails after trying
+  useEffect(() => {
+    if (websocketUrl && !isConnecting && !isConnected && wsError) {
+      setPackets([]);
+    }
+  }, [websocketUrl, isConnecting, isConnected, wsError]);
 
   // Intrusion rules state
   const portHitsRef = useRef<Map<string, Set<number>>>(new Map());
@@ -89,9 +96,9 @@ export function usePacketStream({ simulate = false, websocketUrl = "ws://localho
     return () => clearInterval(interval);
   }, [packets]);
 
-  // Simulated generator
+  // Simulated generator - only run if no websocketUrl provided AND simulate is true
   useEffect(() => {
-    if (!simulate || websocketUrl) return;
+    if (websocketUrl || !simulate) return;
     
     const id = setInterval(() => {
       const burst = Math.random() < 0.1 ? 50 : Math.floor(Math.random() * 5) + 1; // occasional bursts
