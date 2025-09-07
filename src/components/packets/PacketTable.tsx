@@ -3,7 +3,15 @@ import { Packet } from "@/types/network";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export default function PacketTable({ packets }: { packets: Packet[] }) {
+export default function PacketTable({ packets, connected = false, wsStatus }: { 
+  packets: Packet[];
+  connected?: boolean;
+  wsStatus?: {
+    isConnecting: boolean;
+    reconnectCount: number;
+    error: any;
+  };
+}) {
   const rows = useMemo(() => packets.slice(0, 200), [packets]);
   
   const getProtocolColor = (protocol: string) => {
@@ -99,8 +107,28 @@ export default function PacketTable({ packets }: { packets: Packet[] }) {
         </div>
 
         {rows.length === 0 && (
-          <div className="flex items-center justify-center py-8 text-muted-foreground">
-            No packets to display
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground space-y-2">
+            {wsStatus?.isConnecting ? (
+              <>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p>Connecting to NetWatch agent...</p>
+              </>
+            ) : !connected ? (
+              <>
+                <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                  <div className="h-4 w-4 rounded-full bg-red-500"></div>
+                </div>
+                <p>No connection to NetWatch agent</p>
+                <p className="text-xs">Start the Python agent to see real packets</p>
+              </>
+            ) : (
+              <>
+                <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <div className="h-4 w-4 rounded-full bg-green-500"></div>
+                </div>
+                <p>Connected - Waiting for packets...</p>
+              </>
+            )}
           </div>
         )}
       </CardContent>

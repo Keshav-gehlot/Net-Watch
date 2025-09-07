@@ -23,7 +23,7 @@ const PacketsPage = () => {
         
         <AgentSetup wsStatus={wsStatus} connected={connected} />
         
-        <PacketTable packets={packets} />
+        <PacketTable packets={packets} connected={connected} wsStatus={wsStatus} />
       </main>
     </div>
   );
