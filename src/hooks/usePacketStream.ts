@@ -30,7 +30,7 @@ function genPacket(): Packet {
   };
 }
 
-export function usePacketStream({ simulate = true, websocketUrl }: Options) {
+export function usePacketStream({ simulate = false, websocketUrl = "ws://localhost:8765" }: Options) {
   const [packets, setPackets] = useState<Packet[]>([]);
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
   const [pps, setPps] = useState<number>(0);

@@ -114,6 +114,7 @@ export const VirtualizedPacketTable: React.FC<VirtualizedPacketTableProps> = ({
         {filteredPackets.length > 0 ? (
           <List
             height={height}
+            width="100%"
             itemCount={filteredPackets.length}
             itemSize={50}
             itemData={filteredPackets}

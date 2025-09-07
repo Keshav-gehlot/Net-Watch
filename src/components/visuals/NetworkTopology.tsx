@@ -178,10 +178,10 @@ export const NetworkTopology: React.FC<NetworkTopologyProps> = ({
     // Update positions on simulation tick
     simulation.on("tick", () => {
       link
-        .attr("x1", d => (d.source as NetworkNode).x!)
-        .attr("y1", d => (d.source as NetworkNode).y!)
-        .attr("x2", d => (d.target as NetworkNode).x!)
-        .attr("y2", d => (d.target as NetworkNode).y!);
+        .attr("x1", d => (d.source as any).x!)
+        .attr("y1", d => (d.source as any).y!)
+        .attr("x2", d => (d.target as any).x!)
+        .attr("y2", d => (d.target as any).y!);
 
       node
         .attr("cx", d => d.x!)
